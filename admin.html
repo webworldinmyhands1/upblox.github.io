@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 АДМИН-ПАНЕЛЬ</h1>
+        
+        <!-- Вход по паролю -->
+        <div id="loginForm">
+            <input type="password" id="adminPassword" placeholder="Введите пароль">
+            <button onclick="adminLogin()">Войти</button>
+            <p>Пароль по умолчанию: <strong>admin123</strong></p>
+        </div>
+
+        <!-- Скрытый контент -->
+        <div id="adminContent" style="display:none;">
+            <h2>Управление улучшениями</h2>
+            
+            <div class="admin-section">
+                <h3>Заблокировать улучшение для игрока</h3>
+                <input type="text" id="blockPlayer" placeholder="Никнейм игрока">
+                <button onclick="blockPlayer()">Заблокировать</button>
+                <button onclick="unblockPlayer()">Разблокировать</button>
+            </div>
+
+            <div class="admin-section">
+                <h3>Выдать скин игроку</h3>
+                <input type="text" id="givePlayer" placeholder="Никнейм игрока">
+                <select id="giveSkin">
+                    <!-- Скины из JS -->
+                </select>
+                <button onclick="giveSkin()">Выдать</button>
+            </div>
+
+            <div class="admin-section">
+                <h3>Управление шансами</h3>
+                <label>Глобальный множитель шанса:</label>
+                <input type="number" id="globalChance" value="1.0" step="0.1">
+                <button onclick="setGlobalChance()">Применить</button>
+            </div>
+
+            <div class="admin-section">
+                <h3>Список всех игроков</h3>
+                <div id="playerList"></div>
+            </div>
+
+            <button onclick="adminLogout()">Выйти</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
