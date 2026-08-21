@@ -3,56 +3,1011 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ-панель</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Админ-панель Upgrader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a1a;
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 850px;
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(145deg, #12122a, #0a0a1a);
+            border-radius: 30px;
+            border: 1px solid #2a2a5a;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ff6b6b, #f7d94a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .sub {
+            text-align: center;
+            color: #555;
+            font-size: 0.8rem;
+            margin-bottom: 30px;
+        }
+        .login-box {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .login-box input {
+            padding: 14px 20px;
+            width: 300px;
+            max-width: 100%;
+            border: 2px solid #2a2a5a;
+            border-radius: 10px;
+            background: #0a0a20;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        .login-box input:focus {
+            border-color: #f7d94a;
+            outline: none;
+        }
+        .login-box button {
+            padding: 14px 40px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f7d94a, #ff8a00);
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        .login-box button:hover {
+            transform: scale(1.05);
+        }
+        .login-box .hint {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        .panel {
+            display: none;
+        }
+        .panel.active {
+            display: block;
+        }
+        .section {
+            background: #1a1a3a;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #2a2a5a;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #f7d94a;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        .section .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .section input,
+        .section select {
+            padding: 10px 14px;
+            border: 1px solid #2a2a5a;
+            border-radius: 8px;
+            background: #0a0a20;
+            color: #fff;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 120px;
+        }
+        .section input:focus,
+        .section select:focus {
+            border-color: #f7d94a;
+            outline: none;
+        }
+        .section button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #2a2a5a;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .section button:hover {
+            background: #3a3a7a;
+            transform: scale(1.02);
+        }
+        .section button.danger {
+            background: #ff6b6b;
+            color: #000;
+        }
+        .section button.danger:hover {
+            background: #ff4444;
+        }
+        .section button.success {
+            background: #00ff88;
+            color: #000;
+        }
+        .section button.success:hover {
+            background: #00dd77;
+        }
+        .section button.primary {
+            background: #f7d94a;
+            color: #000;
+        }
+        .section button.primary:hover {
+            background: #e8c800;
+        }
+        .section .hint-text {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 6px;
+        }
+        .player-list {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid #1a1a3a;
+            font-size: 0.85rem;
+            align-items: center;
+        }
+        .player-item .name {
+            color: #fff;
+        }
+        .player-item .info {
+            color: #888;
+            font-size: 0.75rem;
+        }
+        .player-item .blocked {
+            color: #ff6b6b;
+        }
+        .player-item .unblocked {
+            color: #00ff88;
+        }
+        .player-item .id-badge {
+            color: #555;
+            font-size: 0.6rem;
+            background: #0a0a20;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .back-link:hover {
+            color: #f7d94a;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            border-radius: 12px;
+            z-index: 999;
+            font-weight: 600;
+            animation: fadeUp 0.4s ease;
+            background: #1a1a3a;
+            border: 1px solid #00ff88;
+            color: #fff;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.error {
+            border-color: #ff6b6b;
+            background: #ff6b6b22;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .flex-row input {
+            flex: 1;
+            min-width: 100px;
+        }
+        @media (max-width: 600px) {
+            .section .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .section button {
+                width: 100%;
+            }
+            .flex-row {
+                flex-direction: column;
+            }
+            .flex-row input {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <h1>🔒 АДМИН-ПАНЕЛЬ</h1>
-        
-        <!-- Вход по паролю -->
-        <div id="loginForm">
-            <input type="password" id="adminPassword" placeholder="Введите пароль">
+        <div class="sub">Управление игроками и скинами</div>
+
+        <!-- ВХОД -->
+        <div id="loginBox" class="login-box">
+            <input type="password" id="adminPass" placeholder="Введите пароль" onkeypress="if(event.key==='Enter')adminLogin()">
+            <br>
             <button onclick="adminLogin()">Войти</button>
-            <p>Пароль по умолчанию: <strong>admin123</strong></p>
+            <div class="hint">Пароль по умолчанию: <strong>admin123</strong></div>
         </div>
 
-        <!-- Скрытый контент -->
-        <div id="adminContent" style="display:none;">
-            <h2>Управление улучшениями</h2>
-            
-            <div class="admin-section">
-                <h3>Заблокировать улучшение для игрока</h3>
-                <input type="text" id="blockPlayer" placeholder="Никнейм игрока">
-                <button onclick="blockPlayer()">Заблокировать</button>
-                <button onclick="unblockPlayer()">Разблокировать</button>
+        <!-- ПАНЕЛЬ -->
+        <div id="panel" class="panel">
+
+            <!-- ===== БЛОКИРОВКА ===== -->
+            <div class="section">
+                <h3>🔒 Блокировка улучшений</h3>
+                <div class="row">
+                    <input type="text" id="blockPlayerInput" placeholder="Никнейм (PlayerXXX)">
+                    <input type="text" id="blockIdInput" placeholder="Или ID" style="min-width:80px;flex:0.5;">
+                    <button class="danger" onclick="blockPlayer()">Заблокировать</button>
+                    <button class="success" onclick="unblockPlayer()">Разблокировать</button>
+                </div>
+                <div class="hint-text">Заблокированные игроки всегда проигрывают при улучшении</div>
             </div>
 
-            <div class="admin-section">
-                <h3>Выдать скин игроку</h3>
-                <input type="text" id="givePlayer" placeholder="Никнейм игрока">
-                <select id="giveSkin">
-                    <!-- Скины из JS -->
-                </select>
-                <button onclick="giveSkin()">Выдать</button>
+            <!-- ===== ВЫДАЧА СКИНА ПО ИМЕНИ + ID ===== -->
+            <div class="section">
+                <h3>🎁 Выдать скин игроку</h3>
+                <div class="row">
+                    <input type="text" id="givePlayerInput" placeholder="Никнейм (PlayerXXX)">
+                    <input type="text" id="giveIdInput" placeholder="ID скина" style="min-width:80px;flex:0.5;">
+                    <button class="success" onclick="giveSkinById()">Выдать по ID</button>
+                </div>
+                <div class="hint-text">Пример: игрок <strong>Player28</strong>, ID скина <strong>93</strong> → выдаст Karambit Fade</div>
+                <hr style="border-color:#1a1a3a;margin:10px 0;">
+                <div class="row">
+                    <input type="text" id="givePlayerInput2" placeholder="Никнейм (PlayerXXX)">
+                    <select id="giveSkinSelect"></select>
+                    <button class="success" onclick="giveSkinByName()">Выдать из списка</button>
+                </div>
+                <div class="hint-text">Или выберите скин из выпадающего списка</div>
             </div>
 
-            <div class="admin-section">
-                <h3>Управление шансами</h3>
-                <label>Глобальный множитель шанса:</label>
-                <input type="number" id="globalChance" value="1.0" step="0.1">
-                <button onclick="setGlobalChance()">Применить</button>
+            <!-- ===== ГЛОБАЛЬНЫЙ ШАНС ===== -->
+            <div class="section">
+                <h3>📊 Глобальный множитель шанса</h3>
+                <div class="row">
+                    <input type="number" id="globalChanceInput" value="1.0" step="0.1" min="0" max="10" style="flex:0.3;">
+                    <button onclick="setGlobalChance()">Применить</button>
+                </div>
+                <div class="hint-text">Меньше 1 = понизить шансы, больше 1 = повысить</div>
             </div>
 
-            <div class="admin-section">
-                <h3>Список всех игроков</h3>
-                <div id="playerList"></div>
+            <!-- ===== СПИСОК ИГРОКОВ ===== -->
+            <div class="section">
+                <h3>👥 Список игроков</h3>
+                <button onclick="refreshPlayerList()">Обновить</button>
+                <div id="playerList" class="player-list" style="margin-top:12px;"></div>
             </div>
 
-            <button onclick="adminLogout()">Выйти</button>
+            <!-- ===== ВЫХОД ===== -->
+            <button onclick="adminLogout()" style="padding:12px 30px;border:none;border-radius:10px;background:#2a2a5a;color:#fff;cursor:pointer;width:100%;">
+                🚪 Выйти
+            </button>
+
+            <a href="index.html" class="back-link">← Вернуться на главную</a>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // ============================================================
+        // ДАННЫЕ (все скины с ID)
+        // ============================================================
+        const SKINS = [
+            // ===== СТРАНИЦА 1 =====
+            { id: 1, name: 'galil-ar Feral', icon: '🔫' },
+            { id: 2, name: 'm4a1-s BlackOps', icon: '🔫' },
+            { id: 3, name: 'usp-s Heated', icon: '🔫' },
+            { id: 4, name: 'aug Overgrowth', icon: '🔫' },
+            { id: 5, name: 'xm1014 Lilies', icon: '🔫' },
+            { id: 6, name: 'desert-eagle Spectrum', icon: '🔫' },
+            { id: 7, name: 'galil-ar Limewire', icon: '🔫' },
+            { id: 8, name: 'mp9 Classified', icon: '🔫' },
+            { id: 9, name: 'r8-revolver Warui', icon: '🔫' },
+            { id: 10, name: 'tec-9 Trajectory', icon: '🔫' },
+            { id: 11, name: 'desert-eagle Turbo', icon: '🔫' },
+            { id: 12, name: 'negev The Jungle', icon: '🔫' },
+            { id: 13, name: 'p250 Frutiger Aero', icon: '🔫' },
+            { id: 14, name: 'usp-s SpecOps', icon: '🔫' },
+            { id: 15, name: 'mp9 Canyon', icon: '🔫' },
+            { id: 16, name: 'p90 Database', icon: '🔫' },
+            { id: 17, name: 'aug Predator', icon: '🔫' },
+            { id: 18, name: 'negev Rotary Power', icon: '🔫' },
+            { id: 19, name: 'nova Half+One', icon: '🔫' },
+            { id: 20, name: 'desert-eagle Velocity', icon: '🔫' },
+            { id: 21, name: 'mp9 Graffiti', icon: '🔫' },
+            { id: 22, name: 'mac-10 Daisies', icon: '🔫' },
+            { id: 23, name: 'dual-berettas Overclock', icon: '🔫' },
+            { id: 24, name: 'mac-10 NGRAM', icon: '🔫' },
+            { id: 25, name: 'sg-553 Cryo', icon: '🔫' },
+            { id: 26, name: 'zeus-x27 BitFyre', icon: '🔫' },
+            { id: 27, name: 'tec-9 Timeless', icon: '🔫' },
+            { id: 28, name: 'desert-eagle Paranoia', icon: '🔫' },
+            { id: 29, name: 'zeus-x27 Overcharge', icon: '🔫' },
+            { id: 30, name: 'glock-18 Fuji', icon: '🔫' },
+            { id: 31, name: 'sg-553 Dynasty', icon: '🔫' },
+            { id: 32, name: 'five-seven Mk II', icon: '🔫' },
+            { id: 33, name: 'm4a1-s Castroil', icon: '🔫' },
+            { id: 34, name: 'm4a4 Ignition', icon: '🔫' },
+            { id: 35, name: 'usp-s Ajax', icon: '🔫' },
+            { id: 36, name: 'desert-eagle Circuit', icon: '🔫' },
+            { id: 37, name: 'case Case #1', icon: '📦' },
+            { id: 38, name: 'case Chrysalis', icon: '📦' },
+            { id: 39, name: 'case Finishline Case', icon: '📦' },
+            { id: 40, name: 'case Glove Case', icon: '📦' },
+            { id: 41, name: 'case Glove Case 2', icon: '📦' },
+            { id: 42, name: 'case Lionheart', icon: '📦' },
+            { id: 43, name: 'package AK-47 PinPoint', icon: '📦' },
+            { id: 44, name: 'package AWP Tekko', icon: '📦' },
+            { id: 45, name: 'package Glock-18 Midas', icon: '📦' },
+            { id: 46, name: 'package Glock-18 PinPoint', icon: '📦' },
+            { id: 47, name: 'package M4A4 Tekko', icon: '📦' },
+            { id: 48, name: 'package MAC-10 Midas', icon: '📦' },
+            { id: 49, name: 'package P90 PinPoint', icon: '📦' },
+            { id: 50, name: 'package Tec-9 Medal.tv', icon: '📦' },
+            { id: 51, name: 'package USP-S Tekko', icon: '📦' },
+            { id: 52, name: 'm4a1-s Orchids', icon: '🔫' },
+            { id: 53, name: 'awp Overdrive', icon: '🔫' },
+            { id: 54, name: 'p90 DRFT', icon: '🔫' },
+            { id: 55, name: 'p90 Chromatic', icon: '🔫' },
+            { id: 56, name: 'ssg-08 Mindspill', icon: '🔫' },
+            { id: 57, name: 'm4a1-s Phaseprint', icon: '🔫' },
+            { id: 58, name: 'awp Bird Hunt', icon: '🔫' },
+            { id: 59, name: 'mag-7 Stock', icon: '🔫' },
+            { id: 60, name: 'sawed-off Stock', icon: '🔫' },
+
+            // ===== СТРАНИЦА 2 =====
+            { id: 61, name: 'zeus-x27 Stock', icon: '🔫' },
+            { id: 62, name: 'desert-eagle Racer8', icon: '🔫' },
+            { id: 63, name: 'ssg-08 Racer8', icon: '🔫' },
+            { id: 64, name: 'ak-47 Midas', icon: '🔫' },
+            { id: 65, name: 'awp Tekko', icon: '🔫' },
+            { id: 66, name: 'desert-eagle High Octane', icon: '🔫' },
+            { id: 67, name: 'glock-18 Midas', icon: '🔫' },
+            { id: 68, name: 'm4a1-s SuperSoaked', icon: '🔫' },
+            { id: 69, name: 'mac-10 Midas', icon: '🔫' },
+            { id: 70, name: 'sawed-off SuperSoaked', icon: '🔫' },
+            { id: 71, name: 'tec-9 Medal.tv', icon: '🔫' },
+            { id: 72, name: 'usp-s SuperSoaked', icon: '🔫' },
+            { id: 73, name: 'usp-s Tekko', icon: '🔫' },
+            { id: 74, name: 'famas Arctic Camo', icon: '🔫' },
+            { id: 75, name: 'p90 Big Cat', icon: '🔫' },
+            { id: 76, name: 'ssg-08 Desert Strike', icon: '🔫' },
+            { id: 77, name: 'tec-9 Striker', icon: '🔫' },
+            { id: 78, name: 'xm1014 Abstract', icon: '🔫' },
+            { id: 79, name: 'desert-eagle Mercy', icon: '🔫' },
+            { id: 80, name: 'glock-18 Fade', icon: '🔫' },
+            { id: 81, name: 'm4a1-s Retro', icon: '🔫' },
+            { id: 82, name: 'five-seven Icecap', icon: '🔫' },
+            { id: 83, name: 'nova Arctic Stripe', icon: '🔫' },
+            { id: 84, name: 'desert-eagle Permafrost', icon: '🔫' },
+            { id: 85, name: 'dual-berettas Choking Hazard', icon: '🔫' },
+            { id: 86, name: 'usp-s Wintergreen', icon: '🔫' },
+            { id: 87, name: 'package AK-47 Midas', icon: '📦' },
+            { id: 88, name: 'package MP9 High Octane', icon: '📦' },
+            { id: 89, name: 'm4a1-s Anodized Red', icon: '🔫' },
+            { id: 90, name: 'hand-wraps Carpet', icon: '🧤' },
+            { id: 91, name: 'hand-wraps Hunter', icon: '🧤' },
+            { id: 92, name: 'package MP-9 Anodized Red', icon: '📦' },
+            { id: 93, name: 'gut Rusted', icon: '🔪' },
+            { id: 94, name: 'hand-wraps Checkers', icon: '🧤' },
+            { id: 95, name: 'hand-wraps Camouflage', icon: '🧤' },
+            { id: 96, name: 'hand-wraps Taped', icon: '🧤' },
+            { id: 97, name: 'driver-gloves Midnight Weave', icon: '🧤' },
+            { id: 98, name: 'operator-gloves Hunter', icon: '🧤' },
+            { id: 99, name: 'hand-wraps Snakeskin', icon: '🧤' },
+            { id: 100, name: 'driver-gloves Tartan', icon: '🧤' },
+            { id: 101, name: 'gut Naval', icon: '🔪' },
+            { id: 102, name: 'driver-gloves Gator', icon: '🧤' },
+            { id: 103, name: 'package AWP High Octane', icon: '📦' },
+            { id: 104, name: 'driver-gloves Nomad', icon: '🧤' },
+            { id: 105, name: 'package Desert Eagle High Octane', icon: '📦' },
+            { id: 106, name: 'flip Violet', icon: '🔪' },
+            { id: 107, name: 'skeleton Woodland', icon: '🔪' },
+            { id: 108, name: 'tec-9 Monarch', icon: '🔫' },
+            { id: 109, name: 'flip Safari', icon: '🔪' },
+            { id: 110, name: 'sports-gloves Hunter', icon: '🧤' },
+            { id: 111, name: 'case Winter 2025', icon: '📦' },
+            { id: 112, name: 'driver-gloves Tuxedo', icon: '🧤' },
+            { id: 113, name: 'bayonet Woodland', icon: '🔪' },
+            { id: 114, name: 'flip Whiteout', icon: '🔪' },
+            { id: 115, name: 'driver-gloves Cardinal Weave', icon: '🧤' },
+            { id: 116, name: 'flip Naval', icon: '🔪' },
+            { id: 117, name: 'nova Heat', icon: '🔫' },
+            { id: 118, name: 'package AUG Anodized Red', icon: '📦' },
+            { id: 119, name: 'sports-gloves Dune', icon: '🧤' },
+            { id: 120, name: 'galil-ar Irradiated', icon: '🔫' },
+
+            // ===== СТРАНИЦА 3 =====
+            { id: 121, name: 'nova Flutter', icon: '🔫' },
+            { id: 122, name: 'm4a4 Wrapped', icon: '🔫' },
+            { id: 123, name: 'stiletto Midnight', icon: '🔪' },
+            { id: 124, name: 'operator-gloves Amber Fade', icon: '🧤' },
+            { id: 125, name: 'flip Vanilla', icon: '🔪' },
+            { id: 126, name: 'stiletto Woodland', icon: '🔪' },
+            { id: 127, name: 'driver-gloves Leopard', icon: '🧤' },
+            { id: 128, name: 'operator-gloves Agent', icon: '🧤' },
+            { id: 129, name: 'hand-wraps Crime Scene', icon: '🧤' },
+            { id: 130, name: 'stiletto Damascus', icon: '🔪' },
+            { id: 131, name: 'flip Blackwidow', icon: '🔪' },
+            { id: 132, name: 'stiletto Doodle', icon: '🔪' },
+            { id: 133, name: 'gut Scarlet', icon: '🔪' },
+            { id: 134, name: 'driver-gloves Cardinal', icon: '🧤' },
+            { id: 135, name: 'negev Noctiflora', icon: '🔫' },
+            { id: 136, name: 'famas Wallpaper', icon: '🔫' },
+            { id: 137, name: 'bayonet Midnight', icon: '🔪' },
+            { id: 138, name: 'xm1014 Splatter', icon: '🔫' },
+            { id: 139, name: 'driver-gloves Cobra', icon: '🧤' },
+            { id: 140, name: 'skeleton Blackwidow', icon: '🔪' },
+            { id: 141, name: 'ak-47 Red Baron', icon: '🔫' },
+            { id: 142, name: 'butterfly Woodland', icon: '🔪' },
+            { id: 143, name: 'stiletto Vanilla', icon: '🔪' },
+            { id: 144, name: 'operator-gloves Bumblebee', icon: '🧤' },
+            { id: 145, name: 'butterfly Violet', icon: '🔪' },
+            { id: 146, name: 'operator-gloves Smoke', icon: '🧤' },
+            { id: 147, name: 'gut Tiger Stripes', icon: '🔪' },
+            { id: 148, name: 'hand-wraps Meander', icon: '🧤' },
+            { id: 149, name: 'operator-gloves Reinforced', icon: '🧤' },
+            { id: 150, name: 'hand-wraps Aztec', icon: '🧤' },
+            { id: 151, name: 'mag-7 Vision7', icon: '🔫' },
+            { id: 152, name: 'sports-gloves Blackout', icon: '🧤' },
+            { id: 153, name: 'package M4A1-S Anodized Red', icon: '📦' },
+            { id: 154, name: 'hand-wraps Bandage', icon: '🧤' },
+            { id: 155, name: 'sports-gloves Bumblebee', icon: '🧤' },
+            { id: 156, name: 'bayonet Rusted', icon: '🔪' },
+            { id: 157, name: 'sports-gloves Freshmint', icon: '🧤' },
+            { id: 158, name: 'nova Slime', icon: '🔫' },
+            { id: 159, name: 'xm1014 Koi', icon: '🔫' },
+            { id: 160, name: 'operator-gloves Emerald Widow', icon: '🧤' },
+            { id: 161, name: 'karambit Safari', icon: '🔪' },
+            { id: 162, name: 'driver-gloves Snow Leopard', icon: '🧤' },
+            { id: 163, name: 'sg-553 Frostline', icon: '🔫' },
+            { id: 164, name: 'bayonet Vanilla', icon: '🔪' },
+            { id: 165, name: 'glock-18 Broken Tv', icon: '🔫' },
+            { id: 166, name: 'karambit Naval', icon: '🔪' },
+            { id: 167, name: 'stiletto Blackwidow', icon: '🔪' },
+            { id: 168, name: 'butterfly Vanilla', icon: '🔪' },
+            { id: 169, name: 'p250 Glacial', icon: '🔫' },
+            { id: 170, name: 'sports-gloves Racer', icon: '🧤' },
+            { id: 171, name: 'r8-revolver Bloody8', icon: '🔫' },
+            { id: 172, name: 'operator-gloves Hellwire', icon: '🧤' },
+            { id: 173, name: 'karambit Violet', icon: '🔪' },
+            { id: 174, name: 'p250 Pulse', icon: '🔫' },
+            { id: 175, name: 'sports-gloves Labyrinth', icon: '🧤' },
+            { id: 176, name: 'operator-gloves Black Widow', icon: '🧤' },
+            { id: 177, name: 'aug Tension', icon: '🔫' },
+            { id: 178, name: 'tec-9 Vice', icon: '🔫' },
+            { id: 179, name: 'sports-gloves Tidal', icon: '🧤' },
+            { id: 180, name: 'five-seven Control', icon: '🔫' },
+
+            // ===== СТРАНИЦА 4 =====
+            { id: 181, name: 'sawed-off Panthera', icon: '🔫' },
+            { id: 182, name: 'p250 B-250', icon: '🔫' },
+            { id: 183, name: 'famas Medic', icon: '🔫' },
+            { id: 184, name: 'ssg-08 Labyrinth', icon: '🔫' },
+            { id: 185, name: 'negev Frostbloom', icon: '🔫' },
+            { id: 186, name: 'dual-berettas Vernal', icon: '🔫' },
+            { id: 187, name: 'operator-gloves Fade', icon: '🧤' },
+            { id: 188, name: 'butterfly Scarlet', icon: '🔪' },
+            { id: 189, name: 'aug Hot Rod', icon: '🔫' },
+            { id: 190, name: 'bayonet Scarlet', icon: '🔪' },
+            { id: 191, name: 'karambit Scarlet', icon: '🔪' },
+            { id: 192, name: 'stiletto Violet', icon: '🔪' },
+            { id: 193, name: 'sports-gloves Malibu', icon: '🧤' },
+            { id: 194, name: 'mp9 Paranoia', icon: '🔫' },
+            { id: 195, name: 'bayonet Tiger Stripes', icon: '🔪' },
+            { id: 196, name: 'mac-10 Ivory', icon: '🔫' },
+            { id: 197, name: 'booth Food Cart', icon: '🎪' },
+            { id: 198, name: 'booth Ice Cream Stand', icon: '🎪' },
+            { id: 199, name: 'sports-gloves Imperial', icon: '🧤' },
+            { id: 200, name: 'bayonet Fade', icon: '🔪' },
+            { id: 201, name: 'dual-berettas Tension', icon: '🔫' },
+            { id: 202, name: 'p250 Zen', icon: '🔫' },
+            { id: 203, name: 'mac-10 Air Mail', icon: '🔫' },
+            { id: 204, name: 'ak-47 Aniki', icon: '🔫' },
+            { id: 205, name: 'mac-10 Nailgun', icon: '🔫' },
+            { id: 206, name: 'karambit Aurora', icon: '🔪' },
+            { id: 207, name: 'dual-berettas Gilded', icon: '🔫' },
+            { id: 208, name: 'karambit Tiger Stripes', icon: '🔪' },
+            { id: 209, name: 'dual-berettas Inked', icon: '🔫' },
+            { id: 210, name: 'p90 Synthwave', icon: '🔫' },
+            { id: 211, name: 'stiletto Safari', icon: '🔪' },
+            { id: 212, name: 'mp9 Choke Oil', icon: '🔫' },
+            { id: 213, name: 'gut Noir', icon: '🔪' },
+            { id: 214, name: 'xm1014 Office', icon: '🔫' },
+            { id: 215, name: 'awp Typhon', icon: '🔫' },
+            { id: 216, name: 'p250 Mindspill', icon: '🔫' },
+            { id: 217, name: 'awp Railgun', icon: '🔫' },
+            { id: 218, name: 'glock-18 Aurora', icon: '🔫' },
+            { id: 219, name: 'booth Pirate Ship', icon: '🎪' },
+            { id: 220, name: 'sawed-off Improvised', icon: '🔫' },
+            { id: 221, name: 'galil-ar Monochrome', icon: '🔫' },
+            { id: 222, name: 'm4a4 BubblePop', icon: '🔫' },
+            { id: 223, name: 'mp9 X-ray', icon: '🔫' },
+            { id: 224, name: 'five-seven X-Ray', icon: '🔫' },
+            { id: 225, name: 'flip Frostbite', icon: '🔪' },
+            { id: 226, name: 'awp High Octane', icon: '🔫' },
+            { id: 227, name: 'famas Mind', icon: '🔫' },
+            { id: 228, name: 'karambit Noir', icon: '🔪' },
+            { id: 229, name: 'ak-47 Sakura', icon: '🔫' },
+            { id: 230, name: 'ak-47 Luminex', icon: '🔫' },
+            { id: 231, name: 'ak-47 PinPoint', icon: '🔫' },
+            { id: 232, name: 'famas Heirloom', icon: '🔫' },
+            { id: 233, name: 'charm Cheer', icon: '🔮' },
+            { id: 234, name: 'charm F8', icon: '🔮' },
+            { id: 235, name: 'charm Prototype', icon: '🔮' },
+            { id: 236, name: 'booth DJ', icon: '🎪' },
+            { id: 237, name: 'booth VIP', icon: '🎪' },
+            { id: 238, name: 'ssg-08 Prototype', icon: '🔫' },
+            { id: 239, name: 'mp9 Anodized Red', icon: '🔫' },
+            { id: 240, name: 'p90 PinPoint', icon: '🔫' },
+
+            // ===== СТРАНИЦА 5 =====
+            { id: 241, name: 'ssg-08 Onyx', icon: '🔫' },
+            { id: 242, name: 'aug Anodized Red', icon: '🔫' },
+            { id: 243, name: 'awp Beta', icon: '🔫' },
+            { id: 244, name: 'mp9 High Octane', icon: '🔫' },
+            { id: 245, name: 'glock-18 PinPoint', icon: '🔫' },
+            { id: 246, name: 'm4a4 Tekko', icon: '🔫' },
+            { id: 247, name: 'm4a4 B-hop', icon: '🔫' },
+            { id: 248, name: 'galil-ar Irid', icon: '🔫' },
+            { id: 249, name: 'awp Metamorphosis', icon: '🔫' },
+            { id: 250, name: 'skeleton Violet', icon: '🔪' },
+            { id: 251, name: 'stiletto Rusted', icon: '🔪' },
+            { id: 252, name: 'flip Fade', icon: '🔪' },
+            { id: 253, name: 'flip Scarlet', icon: '🔪' },
+            { id: 254, name: 'flip Aurora', icon: '🔪' },
+            { id: 255, name: 'butterfly Doodle', icon: '🔪' },
+            { id: 256, name: 'karambit Vanilla', icon: '🔪' },
+            { id: 257, name: 'butterfly Rusted', icon: '🔪' },
+            { id: 258, name: 'bayonet Violet', icon: '🔪' },
+            { id: 259, name: 'stiletto Tiger Stripes', icon: '🔪' },
+            { id: 260, name: 'butterfly Midnight', icon: '🔪' },
+            { id: 261, name: 'karambit Blackwidow', icon: '🔪' },
+            { id: 262, name: 'karambit Midnight', icon: '🔪' },
+            { id: 263, name: 'gut Whiteout', icon: '🔪' },
+            { id: 264, name: 'skeleton Vanilla', icon: '🔪' },
+            { id: 265, name: 'karambit Rusted', icon: '🔪' },
+            { id: 266, name: 'bayonet Blackwidow', icon: '🔪' },
+            { id: 267, name: 'karambit Whiteout', icon: '🔪' },
+            { id: 268, name: 'karambit Woodland', icon: '🔪' },
+            { id: 269, name: 'gut Vanilla', icon: '🔪' },
+            { id: 270, name: 'bayonet Doodle', icon: '🔪' },
+            { id: 271, name: 'gut Woodland', icon: '🔪' },
+            { id: 272, name: 'gut Violet', icon: '🔪' },
+            { id: 273, name: 'flip Midnight', icon: '🔪' },
+            { id: 274, name: 'butterfly Safari', icon: '🔪' },
+            { id: 275, name: 'bayonet Naval', icon: '🔪' },
+            { id: 276, name: 'gut Blackwidow', icon: '🔪' },
+            { id: 277, name: 'butterfly Tiger Stripes', icon: '🔪' },
+            { id: 278, name: 'butterfly Damascus', icon: '🔪' },
+            { id: 279, name: 'skeleton Scarlet', icon: '🔪' },
+            { id: 280, name: 'karambit Frostbite', icon: '🔪' },
+            { id: 281, name: 'flip Woodland', icon: '🔪' },
+            { id: 282, name: 'gut Midnight', icon: '🔪' },
+            { id: 283, name: 'gut Fade', icon: '🔪' },
+            { id: 284, name: 'butterfly Fade', icon: '🔪' },
+            { id: 285, name: 'bayonet Damascus', icon: '🔪' },
+            { id: 286, name: 'butterfly Blackwidow', icon: '🔪' },
+            { id: 287, name: 'gut Frostbite', icon: '🔪' },
+            { id: 288, name: 'karambit Doodle', icon: '🔪' },
+            { id: 289, name: 'flip Doodle', icon: '🔪' },
+            { id: 290, name: 'skeleton Midnight', icon: '🔪' },
+            { id: 291, name: 'bayonet Safari', icon: '🔪' },
+            { id: 292, name: 'flip Damascus', icon: '🔪' },
+            { id: 293, name: 'skeleton Whiteout', icon: '🔪' },
+            { id: 294, name: 'charm Contributor', icon: '🔮' },
+            { id: 295, name: 'badge Accelerator', icon: '🏅' },
+            { id: 296, name: 'badge Administrator', icon: '🏅' },
+            { id: 297, name: 'badge Contributor', icon: '🏅' },
+            { id: 298, name: 'badge Medal.tv', icon: '🏅' },
+            { id: 299, name: 'badge Premium', icon: '🏅' },
+            { id: 300, name: 'badge Prototype', icon: '🏅' },
+
+            // ===== СТРАНИЦА 6 =====
+            { id: 301, name: 'badge Star Creator', icon: '🏅' },
+            { id: 302, name: 'badge Verified', icon: '🏅' },
+            { id: 303, name: 'badge Winter 2025', icon: '🏅' },
+            { id: 304, name: 'stiletto Fade', icon: '🔪' },
+            { id: 305, name: 'stiletto Naval', icon: '🔪' },
+            { id: 306, name: 'stiletto Scarlet', icon: '🔪' },
+            { id: 307, name: 'stiletto Whiteout', icon: '🔪' },
+            { id: 308, name: 'flip Tiger Stripes', icon: '🔪' },
+            { id: 309, name: 'gut Doodle', icon: '🔪' },
+            { id: 310, name: 'skeleton Naval', icon: '🔪' },
+            { id: 311, name: 'flip Noir', icon: '🔪' },
+            { id: 312, name: 'butterfly Whiteout', icon: '🔪' },
+            { id: 313, name: 'gut Aurora', icon: '🔪' },
+            { id: 314, name: 'flip Rusted', icon: '🔪' },
+            { id: 315, name: 'karambit Damascus', icon: '🔪' },
+            { id: 316, name: 'karambit Fade', icon: '🔪' },
+            { id: 317, name: 'gut Damascus', icon: '🔪' },
+            { id: 318, name: 'bayonet Whiteout', icon: '🔪' },
+            { id: 319, name: 'skeleton Safari', icon: '🔪' },
+            { id: 320, name: 'skeleton Fade', icon: '🔪' },
+            { id: 321, name: 'gut Safari', icon: '🔪' },
+            { id: 322, name: 'butterfly Naval', icon: '🔪' },
+            { id: 323, name: 'badge The Ambassador', icon: '🏅' },
+            { id: 324, name: 'm4a4 The Ambassador', icon: '🔫' },
+            { id: 325, name: 'sports-gloves The Ambassador', icon: '🧤' },
+        ];
+
+        // ============================================================
+        // ЗАГРУЗКА
+        // ============================================================
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('upgrader_data');
+                if (saved) return JSON.parse(saved);
+            } catch (_) {}
+            return null;
+        }
+
+        function saveState(data) {
+            localStorage.setItem('upgrader_data', JSON.stringify(data));
+        }
+
+        function getState() {
+            const saved = loadState();
+            if (saved) return saved;
+            return {
+                playerId: null,
+                playerName: null,
+                selectedSkin: null,
+                targetSkin: null,
+                mult: 1,
+                chance: 55,
+                balance: 0,
+                wins: 0,
+                loses: 0,
+                total: 0,
+                blocked: [],
+                skins: {},
+                globalChance: 1,
+                isRolling: false,
+            };
+        }
+
+        // ============================================================
+        // ПОИСК ИГРОКА
+        // ============================================================
+        function findPlayerByNameOrId(name, id) {
+            const state = getState();
+            const players = Object.keys(state.skins);
+
+            // Поиск по имени
+            if (name) {
+                const found = players.find(p => p.toLowerCase() === name.toLowerCase());
+                if (found) return found;
+            }
+
+            // Поиск по ID (в имени PlayerXXX)
+            if (id) {
+                for (const p of players) {
+                    const match = p.match(/^Player(\d+)$/);
+                    if (match && match[1] === id.toString()) {
+                        return p;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        // ============================================================
+        // АДМИН ВХОД
+        // ============================================================
+        function adminLogin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === 'admin123') {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('panel').classList.add('active');
+                populateSkinSelect();
+                refreshPlayerList();
+                const state = getState();
+                document.getElementById('globalChanceInput').value = state.globalChance || 1;
+            } else {
+                toast('❌ Неверный пароль!', 'error');
+            }
+        }
+
+        function adminLogout() {
+            document.getElementById('loginBox').style.display = 'block';
+            document.getElementById('panel').classList.remove('active');
+            document.getElementById('adminPass').value = '';
+        }
+
+        // ============================================================
+        // ЗАПОЛНЕНИЕ SELECT
+        // ============================================================
+        function populateSkinSelect() {
+            const select = document.getElementById('giveSkinSelect');
+            select.innerHTML = '';
+            SKINS.forEach(skin => {
+                const opt = document.createElement('option');
+                opt.value = skin.id;
+                opt.textContent = `[${skin.id}] ${skin.icon} ${skin.name}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // ============================================================
+        // БЛОКИРОВКА
+        // ============================================================
+        function blockPlayer() {
+            const nameInput = document.getElementById('blockPlayerInput').value.trim();
+            const idInput = document.getElementById('blockIdInput').value.trim();
+
+            let playerName = nameInput;
+            if (idInput && !playerName) {
+                const found = findPlayerByNameOrId('', idInput);
+                if (found) playerName = found;
+            }
+
+            if (!playerName) {
+                toast('Введите никнейм или ID!', 'error');
+                return;
+            }
+
+            const state = getState();
+            if (!state.skins[playerName]) {
+                toast(`⚠️ Игрок ${playerName} не найден!`, 'error');
+                return;
+            }
+
+            if (!state.blocked.includes(playerName)) {
+                state.blocked.push(playerName);
+                saveState(state);
+                refreshPlayerList();
+                toast(`🔒 ${playerName} заблокирован!`, 'success');
+            } else {
+                toast(`⚠️ ${playerName} уже заблокирован`, 'error');
+            }
+            document.getElementById('blockPlayerInput').value = '';
+            document.getElementById('blockIdInput').value = '';
+        }
+
+        function unblockPlayer() {
+            const nameInput = document.getElementById('blockPlayerInput').value.trim();
+            const idInput = document.getElementById('blockIdInput').value.trim();
+
+            let playerName = nameInput;
+            if (idInput && !playerName) {
+                const found = findPlayerByNameOrId('', idInput);
+                if (found) playerName = found;
+            }
+
+            if (!playerName) {
+                toast('Введите никнейм или ID!', 'error');
+                return;
+            }
+
+            const state = getState();
+            state.blocked = state.blocked.filter(p => p !== playerName);
+            saveState(state);
+            refreshPlayerList();
+            toast(`✅ ${playerName} разблокирован!`, 'success');
+            document.getElementById('blockPlayerInput').value = '';
+            document.getElementById('blockIdInput').value = '';
+        }
+
+        // ============================================================
+        // ВЫДАЧА СКИНА ПО ID (НОВЫЙ МЕТОД)
+        // ============================================================
+        function giveSkinById() {
+            const nameInput = document.getElementById('givePlayerInput').value.trim();
+            const idInput = document.getElementById('giveIdInput').value.trim();
+
+            if (!nameInput) {
+                toast('Введите никнейм игрока!', 'error');
+                return;
+            }
+
+            if (!idInput) {
+                toast('Введите ID скина!', 'error');
+                return;
+            }
+
+            const skinId = parseInt(idInput);
+            if (isNaN(skinId) || skinId < 1) {
+                toast('Введите корректный ID скина (число)!', 'error');
+                return;
+            }
+
+            // Находим скин по ID
+            const skin = SKINS.find(s => s.id === skinId);
+            if (!skin) {
+                toast(`❌ Скин с ID ${skinId} не найден!`, 'error');
+                return;
+            }
+
+            // Находим игрока
+            let playerName = nameInput;
+            const state = getState();
+
+            // Если игрока нет — создаём
+            if (!state.skins[playerName]) {
+                state.skins[playerName] = [];
+            }
+
+            // Проверяем, есть ли уже такой скин
+            if (state.skins[playerName].includes(skinId)) {
+                toast(`⚠️ У ${playerName} уже есть ${skin.name}`, 'error');
+                return;
+            }
+
+            // Выдаём скин
+            state.skins[playerName].push(skinId);
+            saveState(state);
+            refreshPlayerList();
+
+            toast(`✅ ${skin.icon} ${skin.name} [ID:${skinId}] выдан ${playerName}!`, 'success');
+            document.getElementById('givePlayerInput').value = '';
+            document.getElementById('giveIdInput').value = '';
+        }
+
+        // ============================================================
+        // ВЫДАЧА СКИНА ИЗ СПИСКА (СТАРЫЙ МЕТОД)
+        // ============================================================
+        function giveSkinByName() {
+            const nameInput = document.getElementById('givePlayerInput2').value.trim();
+            const skinId = parseInt(document.getElementById('giveSkinSelect').value);
+
+            if (!nameInput) {
+                toast('Введите никнейм!', 'error');
+                return;
+            }
+
+            const state = getState();
+            if (!state.skins[nameInput]) {
+                state.skins[nameInput] = [];
+            }
+
+            if (!state.skins[nameInput].includes(skinId)) {
+                state.skins[nameInput].push(skinId);
+                saveState(state);
+                refreshPlayerList();
+                const skin = SKINS.find(s => s.id === skinId);
+                toast(`✅ ${skin?.name} выдан ${nameInput}!`, 'success');
+            } else {
+                toast(`⚠️ У ${nameInput} уже есть этот скин`, 'error');
+            }
+            document.getElementById('givePlayerInput2').value = '';
+        }
+
+        // ============================================================
+        // ГЛОБАЛЬНЫЙ ШАНС
+        // ============================================================
+        function setGlobalChance() {
+            const val = parseFloat(document.getElementById('globalChanceInput').value);
+            if (isNaN(val) || val < 0) {
+                toast('Введите число!', 'error');
+                return;
+            }
+            const state = getState();
+            state.globalChance = val;
+            saveState(state);
+            toast(`📊 Глобальный шанс: ${val}x`, 'success');
+        }
+
+        // ============================================================
+        // СПИСОК ИГРОКОВ
+        // ============================================================
+        function refreshPlayerList() {
+            const state = getState();
+            const container = document.getElementById('playerList');
+            const players = Object.keys(state.skins);
+
+            if (players.length === 0) {
+                container.innerHTML = '<div style="color:#666;text-align:center;padding:20px;">Нет игроков</div>';
+                return;
+            }
+
+            // Сортируем по номеру
+            players.sort((a, b) => {
+                const numA = parseInt(a.replace('Player', '')) || 0;
+                const numB = parseInt(b.replace('Player', '')) || 0;
+                return numA - numB;
+            });
+
+            container.innerHTML = players.map(name => {
+                const isBlocked = state.blocked.includes(name);
+                const count = state.skins[name].length;
+                const idMatch = name.match(/^Player(\d+)$/);
+                const id = idMatch ? idMatch[1] : '---';
+                // Показываем первые 5 скинов
+                const skinNames = state.skins[name].slice(0, 5).map(id => {
+                    const s = SKINS.find(sk => sk.id === id);
+                    return s ? s.icon : '❓';
+                }).join(' ');
+                const more = state.skins[name].length > 5 ? ` +${state.skins[name].length - 5}` : '';
+                return `
+                    <div class="player-item">
+                        <span class="name">${name}</span>
+                        <span>
+                            <span class="id-badge">ID: ${id}</span>
+                            <span class="info">
+                                ${count} скинов
+                                ${isBlocked ? '<span class="blocked">🔒</span>' : '<span class="unblocked">✅</span>'}
+                                ${skinNames}${more}
+                            </span>
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function toast(text, type = 'info') {
+            const old = document.querySelector('.toast');
+            if (old) old.remove();
+            const div = document.createElement('div');
+            div.className = 'toast' + (type === 'error' ? ' error' : '');
+            div.textContent = text;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        // ============================================================
+        // ЗАПУСК
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Подсказка для Enter в полях
+            document.getElementById('giveIdInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') giveSkinById();
+            });
+            document.getElementById('givePlayerInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') giveSkinById();
+            });
+        });
+    </script>
+
 </body>
 </html>
