@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloxStrike Upgrader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>BLOXSTRIKE UPGRADER</h1>
+        
+        <!-- Выбор игрока (для демонстрации) -->
+        <div class="player-select">
+            <label>Ваш никнейм:</label>
+            <input type="text" id="playerName" placeholder="Введите никнейм" value="Игрок1">
+            <button onclick="login()">Войти</button>
+        </div>
+
+        <!-- Сетка скинов -->
+        <div class="skin-grid">
+            <h3>Выберите скин для улучшения</h3>
+            <div class="grid-container" id="skinGrid">
+                <!-- Скины будут добавлены через JavaScript -->
+            </div>
+        </div>
+
+        <!-- Центральный слот -->
+        <div class="upgrade-area">
+            <h3>Выберите скин для апгрейда</h3>
+            <div class="center-slot" id="centerSlot">
+                <div class="slot">💎</div>
+            </div>
+            <div class="chance-display">
+                <span id="chancePercent">50.00%</span>
+                <span id="chanceText">средний шанс</span>
+            </div>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="controls">
+            <button class="upgrade-btn" onclick="upgrade()">Прокачать</button>
+            <div class="multipliers">
+                <button onclick="setMultiplier(2)">×2</button>
+                <button onclick="setMultiplier(4)">×4</button>
+                <button onclick="setMultiplier(8)">×8</button>
+            </div>
+            <div class="chance-buttons">
+                <button onclick="setChance(35)">35%</button>
+                <button onclick="setChance(55)">55%</button>
+                <button onclick="setChance(75)">75%</button>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <p>Баланс: <span id="balance">0</span></p>
+            <p>Успешно: <span id="successCount">0</span> | Всего: <span id="totalCount">0</span></p>
+        </div>
+
+        <!-- Ссылка на админку -->
+        <div class="admin-link">
+            <a href="admin.html">🔑 Админ-панель</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
